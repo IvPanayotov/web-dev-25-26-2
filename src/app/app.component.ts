@@ -41,7 +41,7 @@ export class AppComponent {
     this.registrationForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email,alowedDomainValidator(['@visteon.com', '@tu-sofia.edu'])]],
+      email: ['', [Validators.required, Validators.email,allowedDomainValidator(['@visteon.com', '@tu-sofia.edu'])]],
       university: ['', [Validators.required]]
     });
   }
