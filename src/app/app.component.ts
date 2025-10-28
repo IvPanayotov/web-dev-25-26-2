@@ -47,6 +47,15 @@ export class AppComponent {
   }
 
   onSubmit() {
+    const emailName = this.registrationForm.get('email')?.value?.toLowerCase();
+    const isDuplicate = this.users.some(user => user.email.toLowerCase() === emailName);
+
+    if(isDuplicate) {
+      emailName?.setErrors({ duplicate: true });
+      emailName?.markAsTouched();
+      return;
+    }
+
     if (this.registrationForm.valid) {
       this.users.push(this.registrationForm.value);
       console.log('User added:', this.registrationForm.value);
@@ -72,6 +81,9 @@ export class AppComponent {
       }
       if (field.errors?.['domain']) {
         return 'Please enter a valid domain';
+      }
+      if (field.errors?.['duplicate']) {
+        return 'This email already exist';
       }
       
     }
