@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators,AbstractControl,ValidationErrors,ValidatorFn } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -41,7 +41,7 @@ export class AppComponent {
     this.registrationForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email,allowedDomainValidator(['@visteon.com', '@gmail.com'])]],
       university: ['', [Validators.required]]
     });
   }
@@ -56,7 +56,14 @@ export class AppComponent {
       this.registrationForm.markAllAsTouched();
     }
   }
+  removeUser(email: string) {
+    const normalizedEmail = email.toLowerCase();
+    this.users = this.users.filter(user => user.email.toLowerCase() !== normalizedEmail);
 
+  }
+  
+
+  
   getFieldError(fieldName: string): string {
     const field = this.registrationForm.get(fieldName);
     console.log(field?.errors)
@@ -70,7 +77,26 @@ export class AppComponent {
       if (field.errors?.['email']) {
         return 'Please enter a valid email';
       }
+      if (field.errors?.['domain']) {
+        return 'Please enter a valid email';
+      }
+
     }
     return '';
   }
 }
+
+
+function allowedDomainValidator(domains: string[]): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const email = control.value;
+    if (email) {
+      const domain = email.substring(email.lastIndexOf('@'));
+      if (!domains.includes(domain.toLowerCase())) {
+        return { domain: true };
+      }
+    }
+    return null;
+  };
+}
+
